@@ -1,0 +1,77 @@
+﻿:root{
+  --bg:#EEF2F0; --panel:#F8FAF9; --ink:#1D2A33; --muted:#5C6B70; --line:#D3DCD9;
+  --teal:#2F6F73; --low:#23384A; --high:#CFE6DC; --amber:#C98A1B; --amber-ink:#8A5B08;
+  --indigo:#3949AB; --crimson:#C2334D; --grid:#DCE3E0;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12181C; --panel:#1A2227; --ink:#E4EAE8; --muted:#93A3A6; --line:#2C383E;
+    --teal:#5FB3AE; --low:#1B2C3A; --high:#BFE3D4; --amber:#E6B440; --amber-ink:#F2CD72;
+    --indigo:#8C9BFF; --crimson:#F06C84; --grid:#27323A;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12181C; --panel:#1A2227; --ink:#E4EAE8; --muted:#93A3A6; --line:#2C383E;
+  --teal:#5FB3AE; --low:#1B2C3A; --high:#BFE3D4; --amber:#E6B440; --amber-ink:#F2CD72;
+  --indigo:#8C9BFF; --crimson:#F06C84; --grid:#27323A;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1320px;margin:0 auto;padding:28px 20px 60px}
+header{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:end;margin-bottom:22px}
+h1{font-family:"Gowun Batang","Nanum Myeongjo",Georgia,serif;font-weight:700;font-size:clamp(28px,4vw,44px);line-height:1.15;margin:0;letter-spacing:-0.01em}
+.lede{margin:8px 0 0;color:var(--muted);max-width:62ch}
+.formula{font-family:"Gowun Batang",Georgia,serif;font-size:17px;border-left:3px solid var(--amber);padding:6px 0 6px 14px;line-height:1.7;white-space:nowrap}
+.formula small{display:block;font-family:"IBM Plex Sans KR",sans-serif;font-size:12px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px}
+.stage,.card{background:var(--panel);border:1px solid var(--line);border-radius:14px}
+.stage{padding:6px;position:relative;min-height:540px}
+#plot3d{width:100%;height:560px}
+.legend{position:absolute;left:18px;top:14px;font-size:12.5px;color:var(--muted);display:flex;flex-direction:column;gap:3px;pointer-events:none}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:-1px}
+.panel{display:flex;flex-direction:column;gap:14px}
+.card{padding:16px 16px 12px}
+.card h2{font-size:14.5px;font-weight:600;margin:0 0 10px}
+.ctrl{margin-bottom:10px}
+.ctrl .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13.5px}
+.sym{font-family:"Gowun Batang",Georgia,serif;font-weight:700;display:inline-block;min-width:1.6em}
+.ctrl output{font-variant-numeric:tabular-nums;font-weight:600;color:var(--teal)}
+.hint{font-size:12px;color:var(--muted);margin-top:1px}
+input[type=range]{width:100%;accent-color:var(--teal);margin:4px 0 0}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+button{font:inherit;font-size:13.5px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--ink);padding:7px 11px;cursor:pointer}
+button:hover{border-color:var(--teal)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+button.primary{background:var(--teal);border-color:var(--teal);color:var(--panel);font-weight:600}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.actions .wide{grid-column:1/-1}
+label.check{display:flex;gap:8px;align-items:center;font-size:13.5px;margin-top:10px;cursor:pointer}
+.row2{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px;margin-top:18px}
+.row2 .card{padding:14px}
+#profile,#conv{width:100%;height:300px}
+.readout{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:13.5px;font-variant-numeric:tabular-nums;margin-top:6px}
+.readout dt{color:var(--muted)} .readout dd{margin:0;font-weight:500}
+.status{margin-top:10px;padding:10px 12px;border-radius:10px;background:color-mix(in srgb,var(--teal) 10%,transparent);font-size:13.5px;min-height:2.6em}
+.status.warn{background:color-mix(in srgb,var(--crimson) 12%,transparent)}
+.explain{margin-top:34px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:28px;align-items:start}
+.explain h2{font-family:"Gowun Batang",Georgia,serif;font-size:24px;margin:0 0 8px;line-height:1.3}
+.explain p{margin:0 0 10px;max-width:62ch}
+.eq{font-family:"Gowun Batang",Georgia,serif;font-size:18px;margin:12px 0;overflow-x:auto;white-space:nowrap}
+.terms{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.terms div{border-top:2px solid var(--line);padding-top:10px;font-size:14px}
+.terms b{display:block;font-size:15px;margin-bottom:2px}
+.terms .bird{color:var(--muted);font-size:13px;margin-top:4px;display:block}
+.loading{padding:40px;color:var(--muted)}
+@media (max-width:980px){
+  header{grid-template-columns:1fr}
+  .formula{white-space:normal}
+  .grid,.row2,.explain{grid-template-columns:1fr}
+  #plot3d{height:440px} .stage{min-height:440px}
+  .terms{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
