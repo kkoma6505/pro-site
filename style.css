@@ -1,3 +1,4 @@
+@font-face{font-family:"마비옛체";src:url("fonts/Mabinogi_Classic_TTF.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap}
 :root{
   --bg:#EEF2F0; --panel:#F8FAF9; --ink:#1D2A33; --muted:#5C6B70; --line:#D3DCD9;
   --teal:#2F6F73; --low:#23384A; --high:#CFE6DC; --amber:#C98A1B; --amber-ink:#8A5B08;
@@ -20,10 +21,10 @@
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:inherit}
 body{margin:0;background:var(--bg);color:var(--ink);
-  font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+  font-family:"마비옛체","IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
   font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
 .wrap{max-width:1320px;margin:0 auto;padding:28px 20px 60px}
-header{display:grid;grid-template-columns:1fr;gap:20px;align-items:end;margin-bottom:22px}
+header{display:grid;grid-template-columns:1fr;justify-items:center;align-items:center;margin-bottom:22px;text-align:center}
 h1{font-family:"Gowun Batang","Nanum Myeongjo",Georgia,serif;font-weight:700;font-size:clamp(28px,4vw,44px);line-height:1.15;margin:0;letter-spacing:-0.01em}
 .lede{margin:8px 0 0;color:var(--muted);max-width:62ch}
 .formula{font-family:"Gowun Batang",Georgia,serif;font-size:17px;border-left:3px solid var(--amber);padding:6px 0 6px 14px;line-height:1.7;white-space:nowrap}
