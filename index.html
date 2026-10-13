@@ -16,91 +16,54 @@
   <h1>PSO 알고리즘을 통한 최적화</h1>
 </header>
 
-<section class="pso-intro">
-    <h2>입자 군집 최적화(PSO)란?</h2>
-    <article class="pso-block">
-      <h3>1. 어떤 알고리즘인가</h3>
-      <p>입자 군집 최적화(Particle Swarm Optimization, PSO)는 수많은 가능성 가운데 가장 좋은 답을 찾는 최적화 방법입니다. 정해진 예산으로 가장 만족스러운 소비 조합을 고르는 일처럼, 선택지가 무수히 많고 답의 좋고 나쁨이 산맥처럼 오르내리는 문제에서는 모든 후보를 확인할 수 없습니다. 혼자 더듬어 올라가면 눈앞의 작은 언덕을 정상으로 착각하기도 쉽습니다.</p>
-      <p>PSO는 여러 탐색자를 곳곳에 흩어 놓고, 각자 자기 위치의 높이를 재며 서로 정보를 나누게 합니다. 탐색자 하나하나를 입자, 그 무리를 군집이라고 부릅니다. 입자 하나는 답의 후보 하나이며, 이 실습에서는 예산을 모두 써서 살 수 있는 재화 X와 Y의 조합 하나입니다.</p>
-    </article>
-    <article class="pso-block pso-equations">
-      <h3>2. 수식</h3>
-      <p>각 입자는 매 단계마다 속도와 위치를 새로 계산합니다.</p>
-      <div class="eq">속도 갱신　v(t+1) = w · v(t) + c₁ · r₁ · (pbest − x(t)) + c₂ · r₂ · (gbest − x(t))</div>
-      <div class="eq">위치 갱신　x(t+1) = x(t) + v(t+1)</div>
-      <p>x(t), v(t)는 입자의 현재 위치와 속도, pbest는 입자 개인의 최고 위치, gbest는 군집 전체의 최고 위치입니다. w는 관성 계수, c₁과 c₂는 개인 경험과 군집 정보를 따르는 정도이며 r₁과 r₂는 0과 1 사이에서 매번 새로 뽑는 난수입니다.</p>
-    </article>
-    <article class="pso-block">
-      <h3>3. 수식의 의미</h3>
-      <p>속도 갱신식은 입자를 미는 세 가지 힘의 합입니다.</p>
-      <ul>
-        <li><strong>관성</strong> w · v(t): 원래 가던 방향으로 계속 가려는 힘입니다. 크면 넓게 돌아다니고, 작으면 금방 멈춥니다.</li>
-        <li><strong>개인의 기억</strong> c₁ · r₁ · (pbest − x(t)): 입자가 자기 최고 지점으로 돌아가려는 힘입니다.</li>
-        <li><strong>군집의 정보</strong> c₂ · r₂ · (gbest − x(t)): 군집의 최고 지점으로 끌려가는 힘입니다. 너무 크면 진짜 정상이 아닌 곳에 무리가 함께 갇힐 수 있습니다.</li>
-      </ul>
-      <p>난수 때문에 입자는 매번 조금씩 다른 경로로 움직입니다. 새 위치가 더 좋으면 pbest와 gbest를 갱신하고, 이 과정을 반복하며 좋은 답 주변으로 모입니다. 핵심은 넓게 둘러보는 <strong>탐색</strong>과 찾은 답을 파고드는 <strong>활용</strong> 사이의 균형입니다.</p>
-    </article>
-    <article class="pso-block">
-      <h3>4. 유래와 의의</h3>
-      <p>PSO는 1995년 사회심리학자 제임스 케네디(James Kennedy)와 전기공학자 러셀 에버하트(Russell Eberhart)가 발표했습니다. 생물 무리가 정보를 공유하며 움직이는 집단 행동을 모사하던 연구에서 출발했습니다. 관성 계수 w는 1998년 에버하트와 위하이 시(Yuhui Shi)가 더했습니다.</p>
-      <p>PSO는 미분 없이 후보의 좋고 나쁨만 평가해 최적점을 찾을 수 있고, 규칙도 단순합니다. 신경망 학습, 공학 설계, 투자 포트폴리오 구성 등에서 쓰이며 군집 지능의 대표 사례로 꼽힙니다. 다만 최적해를 반드시 찾는다고 보장하지 않으며, 무리가 너무 빨리 모이면 국소 최적점에 머물 수 있습니다. w, c₁, c₂의 설정에 따라 결과도 달라집니다.</p>
-    </article>
-  </section>
-  <section class="practice">
-    <h2>5. 실습 안내</h2>
-    <p>아래 모형에서는 정해진 예산으로 재화 X와 Y를 어떻게 나눠 사야 효용이 가장 커지는지를 PSO로 찾아봅니다. 효용은 봉우리가 여러 개인 산맥처럼 만들었고, 입자들은 예산을 모두 쓰는 조합들이 이루는 능선 위를 움직입니다. 관성, 개인 기억, 군집 정보의 세기를 바꿔 가며 무리가 진짜 정상에 도달하는지, 작은 봉우리에 갇히는지 직접 확인해 보세요.</p>
-  </section>
-
 <div class="row2">
     <div class="card">
-      <h2>능선을 펼쳐서 보기</h2>
-      <div class="hint" style="margin-bottom:4px">예산선을 따라 x를 늘리면 y는 자동으로 줄어듭니다. 선 위의 봉우리 하나하나가 국소 최적점입니다.</div>
+      <h2>예산선 위 효용의 능선</h2>
       <div id="profile"></div>
+      <div class="hint">반투명한 세로선은 각 입자에서 x축으로 내린 수선입니다. 입자들이 최적해로 모이면 수선도 한곳에 겹칩니다.</div>
     </div>
     <div class="card">
-      <h2>무리의 최고 기록</h2>
+      <h2>군집의 최고 기록</h2>
       <div id="conv"></div>
       <dl class="readout" id="readout"></dl>
-      <div class="status" id="status">탐색 시작을 누르면 입자들이 움직이기 시작합니다.</div>
+      <div class="status" id="status">‘한 단계 진행’을 눌러 입자들이 예산선 위를 이동하며 효용을 높이는 과정을 살펴보세요.</div>
     </div>
   </div>
 
   <div class="grid">
     <div class="stage">
-      <div id="plot3d"><div class="loading">3D 그래프를 불러오는 중입니다.</div></div>
+      <div id="landscape"><div class="loading">3차원 효용 지형과 입자 무리를 불러오는 중입니다.</div></div>
       <div class="legend">
-        <span><i style="background:var(--amber)"></i>예산 제약 벽과 능선</span>
-        <span><i style="background:var(--indigo)"></i>입자 (현재 위치)</span>
-        <span><i style="background:var(--crimson)"></i>무리가 찾은 최고점</span>
+        <span><i style="background:var(--amber)"></i>예산 제약 벽과 효용 능선</span>
+        <span><i style="background:var(--teal);opacity:0.24"></i>예산 이내 지형 (반투명)</span>
+        <span><i style="background:var(--indigo)"></i>입자와 이동 경로</span>
+        <span><i style="background:var(--teal)"></i>입자별 최고점 (pbest)</span>
+        <span><i style="background:var(--crimson)"></i>무리의 최고점 (gbest)</span>
+        <span><i style="background:var(--ink)"></i>예산선 위 실제 최적점</span>
+        <span><i style="background:var(--indigo);opacity:0.28"></i>입자에서 바닥으로 내린 수선</span>
       </div>
+      <section class="iteration-log-section" aria-labelledby="iterationLogTitle">
+        <h2 id="iterationLogTitle">단계별 탐색 캡션</h2>
+        <div class="iteration-summary" id="iterationSummary"></div>
+        <ol class="iteration-log" id="iterationLog">
+          <li class="iteration-empty">한 단계 진행을 누르면 이동과 gbest 변화가 표시됩니다.</li>
+        </ol>
+      </section>
     </div>
 
     <div class="panel">
       <div class="card">
-        <h2>탐색 실행</h2>
+        <h2>탐색 조작</h2>
         <div class="formula" id="formula"></div>
         <div class="actions">
-          <button class="primary wide" id="btnRun">탐색 시작</button>
-          <button id="btnStep">한 단계 진행</button>
-          <button id="btnReset">입자 다시 뿌리기</button>
-          <button class="wide" id="btnBatch">같은 설정으로 30번 실험하기</button>
+          <button class="primary wide" id="btnStep">한 단계 진행 ▶</button>
+          <button id="btnReset">처음으로</button>
         </div>
-        <label class="check"><input type="checkbox" id="chkTruth"> 실제 최적점 표시하기</label>
+        <label class="check"><input type="checkbox" id="chkTruth"> 예산선 위 실제 최적점 표시</label>
       </div>
 
       <div class="card">
-        <h2>효용함수</h2>
-        <div class="presets" id="funcPresets"></div>
-        <div id="funcCtrls"></div>
-      </div>
-
-      <div class="card">
-        <h2>예산 제약</h2>
-        <div id="budgetCtrls"></div>
-      </div>
-
-      <div class="card">
-        <h2>입자 무리의 성격</h2>
+        <h2>입자 무리 설정</h2>
         <div class="presets" id="psoPresets"></div>
         <div id="psoCtrls"></div>
       </div>
