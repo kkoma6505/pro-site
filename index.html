@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="background-emblem" aria-hidden="true"></div>
 <div class="wrap">
   <header>
   <h1>PSO 알고리즘을 통한 최적화</h1>
@@ -44,6 +45,7 @@
       </div>
       <section class="iteration-log-section" aria-labelledby="iterationLogTitle">
         <h2 id="iterationLogTitle">단계별 탐색 캡션</h2>
+        <div class="learning-explanation" id="learningExplanation" hidden aria-live="polite"></div>
         <div class="iteration-summary" id="iterationSummary"></div>
         <ol class="iteration-log" id="iterationLog">
           <li class="iteration-empty">한 단계 진행을 누르면 이동과 gbest 변화가 표시됩니다.</li>
@@ -55,6 +57,8 @@
       <div class="card">
         <h2>탐색 조작</h2>
         <div class="formula" id="formula"></div>
+        <label class="check"><input type="checkbox" id="chkSlow"> 천천히 배우기 · 과정별 진행</label>
+        <label class="focus-select" id="focusLabel" hidden>계산을 살펴볼 점 <select id="focusParticle" aria-label="계산을 살펴볼 입자"></select></label>
         <div class="actions">
           <button class="primary wide" id="btnStep">한 단계 진행 ▶</button>
           <button id="btnReset">처음으로</button>

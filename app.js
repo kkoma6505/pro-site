@@ -32,27 +32,35 @@ function newSwarm(n){
   const best=sw.reduce((a,p)=>p.bu>a.bu?p:a,sw[0]);
   return {sw,g:{x:best.bx,u:best.bu}};
 }
-function step(sw,g){
-  const before={x:g.x,u:g.u};
+function planStep(sw,g){
   const vmax=0.2*xMax();
-  for(const p of sw){
-    p.prevX=p.x;
+  return sw.map(p=>{
     const r1=Math.random(),r2=Math.random();
-    p.v=S.w*p.v+S.c1*r1*(p.bx-p.x)+S.c2*r2*(g.x-p.x);
-    p.v=Math.max(-vmax,Math.min(vmax,p.v));p.x=Math.max(0,Math.min(xMax(),p.x+p.v));
-    const u=f(p.x);if(u>p.bu){p.bu=u;p.bx=p.x;}
-  }
+    const inertia=S.w*p.v,personal=S.c1*r1*(p.bx-p.x),social=S.c2*r2*(g.x-p.x);
+    const rawV=inertia+personal+social,v=Math.max(-vmax,Math.min(vmax,rawV)),x=Math.max(0,Math.min(xMax(),p.x+v));
+    return {...p,r1,r2,inertia,personal,social,rawV,nextV:v,nextX:x,nextU:f(x),improved:f(x)>p.bu};
+  });
+}
+function commitPositions(sw,plan){plan.forEach((next,i)=>{sw[i].prevX=next.x;sw[i].x=next.nextX;sw[i].v=next.nextV;});}
+function commitPersonal(sw,plan){plan.forEach((next,i)=>{if(next.improved){sw[i].bu=next.nextU;sw[i].bx=next.nextX;}});}
+function commitGlobal(sw,g){
   const best=sw.reduce((a,p)=>p.bu>a.bu?p:a,sw[0]);g.x=best.bx;g.u=best.bu;
+}
+function step(sw,g){
+  const before={x:g.x,u:g.u},plan=planStep(sw,g);
+  commitPositions(sw,plan);commitPersonal(sw,plan);commitGlobal(sw,g);
   return before;
 }
 
-let swarm=[],gbest={x:0,u:0},iter=0,hist=[],stepLog=[],animating=false;
+let swarm=[],gbest={x:0,u:0},iter=0,hist=[],stepLog=[],animating=false,slowState=null;
 function resetSwarm(){
   if(animating)return;
+  slowState=null;
   const s=newSwarm(S.N); swarm=s.sw; gbest=s.g; iter=0; hist=[gbest.u]; stepLog=[];
   renderIterationLog();
   setStatus('입자를 예산선 위에 무작위로 뿌렸습니다. 한 단계씩 진행해 보세요.');
   renderDynamic();
+  populateFocus();updateLearningMode();setAnimationControls(false);
 }
 
 /* ---------- 색상 ---------- */
@@ -60,6 +68,9 @@ const tok = n => getComputedStyle(document.documentElement).getPropertyValue(n).
 function colors(){ return {ink:tok('--ink'), muted:tok('--muted'), line:tok('--line'), grid:tok('--grid'),
   teal:tok('--teal'), low:tok('--low'), high:tok('--high'), amber:tok('--amber'), amberInk:tok('--amber-ink'),
   indigo:tok('--indigo'), crimson:tok('--crimson'), panel:tok('--panel')}; }
+function focusIndex(){return Math.max(0,Math.min(swarm.length-1,Number($('focusParticle').value)||0));}
+function particleMarker(size,c){return {size:swarm.map((_,i)=>$('chkSlow').checked&&i===focusIndex()?size+2:size),
+  color:swarm.map((_,i)=>$('chkSlow').checked&&i===focusIndex()?c.amber:c.indigo),line:{color:c.panel,width:1}};}
 
 /* ---------- 2D ---------- */
 function layout2D(xt, yt, shapes){
@@ -116,7 +127,7 @@ function renderBudget(viewXs=swarm.map(p=>p.x),bestX=gbest.x,pbestXs=swarm.map(p
     {type:'scatter3d',mode:'lines',...path,line:{color:c.indigo,width:4},opacity:0.45,hoverinfo:'skip'},
     {type:'scatter3d',mode:'lines',...stems,line:{color:c.indigo,width:3},opacity:0.28,hoverinfo:'skip'},
     {type:'scatter3d',mode:'markers',x:pbestXs,y:pbestXs.map(yOf),z:pbestXs.map(f),marker:{size:4,color:c.teal},hovertemplate:'pbest<br>U=%{z:.3f}<extra></extra>'},
-    {type:'scatter3d',mode:'markers',x:viewXs,y:viewXs.map(yOf),z:viewXs.map(f),marker:{size:6,color:c.indigo,line:{color:c.panel,width:1}},hovertemplate:'입자<br>x=%{x:.2f}, y=%{y:.2f}<br>U=%{z:.3f}<extra></extra>'},
+    {type:'scatter3d',mode:'markers',x:viewXs,y:viewXs.map(yOf),z:viewXs.map(f),marker:particleMarker(6,c),hovertemplate:'입자<br>x=%{x:.2f}, y=%{y:.2f}<br>U=%{z:.3f}<extra></extra>'},
     {type:'scatter3d',mode:'markers',x:[bestX],y:[yOf(bestX)],z:[f(bestX)],marker:{size:9,color:c.crimson,symbol:'diamond'},hovertemplate:'gbest<br>U=%{z:.3f}<extra></extra>'},
     {type:'scatter3d',mode:'markers',x:[truth.x],y:[truth.y],z:[truth.u],visible:$('chkTruth').checked,marker:{size:10,color:c.ink,symbol:'circle-open'},hovertemplate:'예산선 위 실제 최적점<br>U=%{z:.3f}<extra></extra>'}
   ];
@@ -135,7 +146,7 @@ function renderProfile(viewXs=swarm.map(p=>p.x),bestX=gbest.x,pbestXs=swarm.map(
     {type:'scatter',mode:'lines',x:seg.x,y:seg.y,line:{color:c.indigo,width:2},opacity:0.3,hoverinfo:'skip'},
     {type:'scatter',mode:'lines',x:stemX,y:stemY,line:{color:c.indigo,width:2},opacity:0.22,hoverinfo:'skip'},
     {type:'scatter',mode:'markers',x:pbestXs,y:pbestXs.map(f),marker:{size:9,color:'rgba(0,0,0,0)',line:{color:c.teal,width:1.4}},hovertemplate:'pbest<br>x=%{x:.2f}<br>U=%{y:.3f}<extra></extra>'},
-    {type:'scatter',mode:'markers',x:viewXs,y:viewXs.map(f),marker:{size:9,color:c.indigo,line:{color:c.panel,width:1}},hovertemplate:'입자<br>x=%{x:.2f}<br>U=%{y:.3f}<extra></extra>'},
+    {type:'scatter',mode:'markers',x:viewXs,y:viewXs.map(f),marker:particleMarker(9,c),hovertemplate:'입자<br>x=%{x:.2f}<br>U=%{y:.3f}<extra></extra>'},
     {type:'scatter',mode:'markers',x:[bestX],y:[f(bestX)],marker:{size:14,color:c.crimson,symbol:'star'},hovertemplate:'gbest<br>x=%{x:.3f}<br>U=%{y:.3f}<extra></extra>'},
     {type:'scatter',mode:'markers',x:[truth.x],y:[truth.u],visible:$('chkTruth').checked,marker:{size:12,color:'rgba(0,0,0,0)',symbol:'circle-open',line:{color:c.ink,width:2}},hovertemplate:'예산선 위 실제 최적점<extra></extra>'}
   ];
@@ -160,11 +171,12 @@ function renderAll(){ renderDynamic(); }
 function setAnimationControls(disabled){
   $('btnStep').disabled=disabled;$('btnReset').disabled=disabled;
   $('chkTruth').disabled=disabled;
-  document.querySelectorAll('#psoCtrls input,#psoPresets button').forEach(el=>el.disabled=disabled);
+  $('chkSlow').disabled=disabled||!!slowState;$('focusParticle').disabled=disabled||!!slowState;
+  document.querySelectorAll('#psoCtrls input,#psoPresets button').forEach(el=>el.disabled=disabled||!!slowState);
 }
-function animateMovement(startXs,startPbests,startBestX){
+function animateMovement(startXs,startPbests,startBestX,duration=720){
   const endXs=swarm.map(p=>p.x),endPbests=swarm.map(p=>p.bx),endBestX=gbest.x;
-  const duration=720;let lastDraw=0;
+  let lastDraw=0;
   return new Promise((resolve,reject)=>{
     const draw=async now=>{
       try{
@@ -220,8 +232,58 @@ function renderIterationLog(){
 }
 function setStatus(msg, warn){ const el=$('status'); el.textContent=msg; el.classList.toggle('warn', !!warn); }
 
+/* 학습 모드에서는 위치와 기억을 실제 순서대로 갱신하고, 클릭 사이에 멈춘다. */
+function populateFocus(){
+  $('focusParticle').innerHTML=swarm.map((_,i)=>`<option value="${i}">입자 ${i+1}</option>`).join('');
+  $('focusParticle').value='0';
+}
+function learningCaption(phase,message){
+  const labels=['속도 계산','위치 이동','pbest 비교','gbest 비교'];
+  $('learningExplanation').innerHTML=`<ol class="learning-phases">${labels.map((label,i)=>`<li class="${phase===i+1?'active':''}" ${phase===i+1?'aria-current="step"':''}>${i+1}. ${label}</li>`).join('')}</ol><p>${message}</p>`;
+}
+function updateLearningMode(){
+  const slow=$('chkSlow').checked;
+  document.querySelector('.wrap').classList.toggle('learning-mode',slow);
+  $('learningExplanation').hidden=!slow;$('focusLabel').hidden=!slow;
+  $('btnStep').textContent=slow?'① 속도 계산 보기 ▶':'한 단계 진행 ▶';
+  if(slow)learningCaption(0,'한 시행을 네 과정으로 나눕니다. 주황색 점의 계산값을 살펴보세요. 각 과정 뒤에는 다음 버튼을 누를 때까지 멈춥니다.');
+}
+async function advanceSlow(){
+  if(animating)return;
+  if(!slowState){
+    slowState={phase:1,plan:planStep(swarm,gbest),before:{...gbest},startXs:swarm.map(p=>p.x),startPbests:swarm.map(p=>p.bx),focus:focusIndex()};
+    const p=slowState.plan[slowState.focus];
+    learningCaption(1,`<strong>${iter+1}시행 · 입자 ${slowState.focus+1}: 속도 계산</strong><br>v′ = wv + c₁r₁(pbest − x) + c₂r₂(gbest − x). 관성은 이전 움직임을, 개인 기억과 군집 정보는 좋은 위치로 향하는 힘을 더합니다.<br>r₁=${p.r1.toFixed(3)}, r₂=${p.r2.toFixed(3)} · 관성 ${p.inertia.toFixed(3)} + 개인 기억 ${p.personal.toFixed(3)} + 군집 정보 ${p.social.toFixed(3)} = ${p.rawV.toFixed(3)}. 속도 제한 적용 후 v′=${p.nextV.toFixed(3)}. 아직 점과 기억은 움직이지 않았습니다.`);
+    $('btnStep').textContent='② 천천히 이동 보기 ▶';setAnimationControls(false);return;
+  }
+  const state=slowState,p=state.plan[state.focus];
+  if(state.phase===1){
+    animating=true;setAnimationControls(true);commitPositions(swarm,state.plan);
+    learningCaption(2,`<strong>${iter+1}시행 · 입자 ${state.focus+1}: 위치 이동</strong><br>x′ = x + v′: ${p.x.toFixed(3)} + (${p.nextV.toFixed(3)}) → ${p.nextX.toFixed(3)}. 위치가 예산선의 범위를 벗어나면 끝점에서 멈춥니다.<br>y′ = (M − pₓx′)/pᵧ = ${yOf(p.nextX).toFixed(3)}. 점과 수선이 함께 움직입니다. 이동 후 U=${p.nextU.toFixed(3)}이며, pbest와 gbest는 아직 이전 기록입니다.`);
+    setStatus(`${iter+1}시행 · 위치를 천천히 이동하는 중입니다.`);
+    try{
+      await Promise.all([renderBudget(state.startXs,state.before.x,state.startPbests),renderProfile(state.startXs,state.before.x,state.startPbests)]);
+      await animateMovement(state.startXs,state.startPbests,state.before.x,2600);
+    }catch(e){await Promise.all([renderBudget(),renderProfile()]);}
+    finally{animating=false;state.phase=2;setAnimationControls(false);}
+    $('btnStep').textContent='③ pbest 비교 보기 ▶';setStatus('이동 완료 · 다음 버튼으로 개인 최고 기록을 비교하세요.');return;
+  }
+  if(state.phase===2){
+    commitPersonal(swarm,state.plan);state.phase=3;
+    learningCaption(3,`<strong>${iter+1}시행 · 입자 ${state.focus+1}: pbest 비교</strong><br>새 위치의 효용 ${p.nextU.toFixed(3)}을 이전 개인 최고 효용 ${p.bu.toFixed(3)}과 비교합니다. ${p.improved?`더 높으므로 pbest를 x=${p.nextX.toFixed(3)}로 갱신합니다.`:'더 높지 않으므로 이전 pbest를 유지합니다.'}<br>전체 ${swarm.length}개 입자 중 ${state.plan.filter(n=>n.improved).length}개가 개인 기록을 갱신했습니다. 군집 최고점은 다음 과정에서 비교합니다.`);
+    await Promise.all([renderBudget(),renderProfile()]);$('btnStep').textContent='④ gbest 비교 보기 ▶';return;
+  }
+  commitGlobal(swarm,gbest);iter++;hist.push(gbest.u);
+  const improved=gbest.u>state.before.u;
+  stepLog.push({n:iter,oldX:state.before.x,oldU:state.before.u,x:gbest.x,u:gbest.u,improved,personalUpdates:state.plan.filter(n=>n.improved).length});
+  learningCaption(4,`<strong>${iter}시행: gbest 비교 · 시행 완료</strong><br>모든 입자의 pbest 중 효용이 가장 큰 기록을 군집 최고점으로 선택합니다. 이전 gbest U=${state.before.u.toFixed(3)}, 비교 후 U=${gbest.u.toFixed(3)}.<br>${improved?`더 좋은 기록을 발견해 빨간 최고점을 x=${n2(gbest.x)}, y=${n2(yOf(gbest.x))}로 갱신했습니다.`:'더 좋은 기록이 없어 군집 최고점을 유지했습니다.'} 다음 시행의 모든 입자는 이 gbest를 참조해 속도를 계산합니다.`);
+  slowState=null;setAnimationControls(false);$('btnStep').textContent='다음 시행 · 속도 계산 ▶';
+  renderDynamic();renderIterationLog();setStatus(`${iter}시행 완료 · 속도 계산부터 다시 살펴볼 수 있습니다.`);
+}
+
 /* ---------- 한 단계 탐색 ---------- */
 async function advanceOneStep(){
+  if($('chkSlow').checked)return advanceSlow();
   if(animating)return;animating=true;setAnimationControls(true);
   const startXs=swarm.map(p=>p.x),startPbests=swarm.map(p=>p.bx),startUtilities=swarm.map(p=>p.bu),startBestX=gbest.x;
   const previous=step(swarm,gbest);iter++;hist.push(gbest.u);
@@ -269,10 +331,13 @@ function init(){
   $('btnStep').addEventListener('click', advanceOneStep);
   $('btnReset').addEventListener('click', resetSwarm);
   $('chkTruth').addEventListener('change', renderDynamic);
+  $('chkSlow').addEventListener('change',()=>{updateLearningMode();renderDynamic();requestAnimationFrame(()=>Plotly.Plots.resize('landscape'));});
+  $('focusParticle').addEventListener('change',()=>{renderDynamic();learningCaption(0,`주황색 입자 ${focusIndex()+1}의 실제 속도와 기록 갱신값을 설명합니다. 속도 계산 버튼을 눌러 시작하세요.`);});
   try{ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', renderAll); }catch(e){}
 
   renderFormula();
   const s=newSwarm(S.N); swarm=s.sw; gbest=s.g; hist=[gbest.u];
+  populateFocus();updateLearningMode();
   renderIterationLog();
   if(!window.Plotly){ $('landscape').innerHTML='<div class="loading">그래프 라이브러리를 불러오지 못했습니다. 페이지를 새로고침해 주세요.</div>'; return; }
   $('landscape').innerHTML='';
