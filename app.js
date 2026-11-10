@@ -76,7 +76,7 @@ function particleMarker(size,c){return {size:swarm.map((_,i)=>$('chkSlow').check
 function layout2D(xt, yt, shapes){
   const c=colors();
   return {paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)', margin:{l:48,r:12,t:8,b:44},
-    font:{family:'IBM Plex Sans KR, sans-serif', color:c.ink, size:12}, showlegend:false, uirevision:'keep2',
+    font:{family:'NEXON Lv2 Gothic OTF, sans-serif', color:c.ink, size:12}, showlegend:false, uirevision:'keep2',
     xaxis:{title:{text:xt}, gridcolor:c.grid, zerolinecolor:c.line, color:c.muted},
     yaxis:{title:{text:yt}, gridcolor:c.grid, zerolinecolor:c.line, color:c.muted}, shapes};
 }
@@ -126,14 +126,14 @@ function renderBudget(viewXs=swarm.map(p=>p.x),bestX=gbest.x,pbestXs=swarm.map(p
     {type:'scatter3d',mode:'lines',x:ridge,y:ridge.map(yOf),z:ridge.map(f),line:{color:c.amber,width:6},hoverinfo:'skip'},
     {type:'scatter3d',mode:'lines',...path,line:{color:c.indigo,width:4},opacity:0.45,hoverinfo:'skip'},
     {type:'scatter3d',mode:'lines',...stems,line:{color:c.indigo,width:3},opacity:0.28,hoverinfo:'skip'},
-    {type:'scatter3d',mode:'markers',x:pbestXs,y:pbestXs.map(yOf),z:pbestXs.map(f),marker:{size:4,color:c.teal},hovertemplate:'pbest<br>U=%{z:.3f}<extra></extra>'},
+    {type:'scatter3d',mode:'markers',x:pbestXs,y:pbestXs.map(yOf),z:pbestXs.map(f),marker:{size:4,color:c.teal},hovertemplate:'개별 입자의 최고 효용 위치<br>U=%{z:.3f}<extra></extra>'},
     {type:'scatter3d',mode:'markers',x:viewXs,y:viewXs.map(yOf),z:viewXs.map(f),marker:particleMarker(6,c),hovertemplate:'입자<br>x=%{x:.2f}, y=%{y:.2f}<br>U=%{z:.3f}<extra></extra>'},
-    {type:'scatter3d',mode:'markers',x:[bestX],y:[yOf(bestX)],z:[f(bestX)],marker:{size:9,color:c.crimson,symbol:'diamond'},hovertemplate:'gbest<br>U=%{z:.3f}<extra></extra>'},
+    {type:'scatter3d',mode:'markers',x:[bestX],y:[yOf(bestX)],z:[f(bestX)],marker:{size:9,color:c.crimson,symbol:'diamond'},hovertemplate:'무리가 찾은 최고 효용 위치<br>U=%{z:.3f}<extra></extra>'},
     {type:'scatter3d',mode:'markers',x:[truth.x],y:[truth.y],z:[truth.u],visible:$('chkTruth').checked,marker:{size:10,color:c.ink,symbol:'circle-open'},hovertemplate:'예산선 위 실제 최적점<br>U=%{z:.3f}<extra></extra>'}
   ];
   const ax=t=>({title:{text:t},color:c.muted,gridcolor:c.grid,zerolinecolor:c.line,showbackground:false});
   const L={paper_bgcolor:'rgba(0,0,0,0)',margin:{l:0,r:0,t:0,b:0},showlegend:false,uirevision:'budget-3d',
-    font:{family:'IBM Plex Sans KR, sans-serif',color:c.ink},scene:{xaxis:ax('재화 X'),yaxis:ax('재화 Y'),zaxis:ax('효용 U'),
+    font:{family:'NEXON Lv2 Gothic OTF, sans-serif',color:c.ink},scene:{xaxis:ax('재화 X'),yaxis:ax('재화 Y'),zaxis:ax('효용 U'),
       camera:{eye:{x:1.55,y:-1.55,z:1}},aspectmode:'manual',aspectratio:{x:1,y:1,z:0.7}}};
   return Plotly.react('landscape',traces,L,{responsive:true,displaylogo:false});
 }
@@ -145,24 +145,30 @@ function renderProfile(viewXs=swarm.map(p=>p.x),bestX=gbest.x,pbestXs=swarm.map(
     {type:'scatter',mode:'lines',x:xs,y:utilityLine,line:{color:c.amber,width:3},hovertemplate:'x=%{x:.2f}<br>U=%{y:.3f}<extra></extra>'},
     {type:'scatter',mode:'lines',x:seg.x,y:seg.y,line:{color:c.indigo,width:2},opacity:0.3,hoverinfo:'skip'},
     {type:'scatter',mode:'lines',x:stemX,y:stemY,line:{color:c.indigo,width:2},opacity:0.22,hoverinfo:'skip'},
-    {type:'scatter',mode:'markers',x:pbestXs,y:pbestXs.map(f),marker:{size:9,color:'rgba(0,0,0,0)',line:{color:c.teal,width:1.4}},hovertemplate:'pbest<br>x=%{x:.2f}<br>U=%{y:.3f}<extra></extra>'},
+    {type:'scatter',mode:'markers',x:pbestXs,y:pbestXs.map(f),marker:{size:9,color:'rgba(0,0,0,0)',line:{color:c.teal,width:1.4}},hovertemplate:'개별 입자의 최고 효용 위치<br>x=%{x:.2f}<br>U=%{y:.3f}<extra></extra>'},
     {type:'scatter',mode:'markers',x:viewXs,y:viewXs.map(f),marker:particleMarker(9,c),hovertemplate:'입자<br>x=%{x:.2f}<br>U=%{y:.3f}<extra></extra>'},
-    {type:'scatter',mode:'markers',x:[bestX],y:[f(bestX)],marker:{size:14,color:c.crimson,symbol:'star'},hovertemplate:'gbest<br>x=%{x:.3f}<br>U=%{y:.3f}<extra></extra>'},
+    {type:'scatter',mode:'markers',x:[bestX],y:[f(bestX)],marker:{size:14,color:c.crimson,symbol:'star'},hovertemplate:'무리가 찾은 최고 효용 위치<br>x=%{x:.3f}<br>U=%{y:.3f}<extra></extra>'},
     {type:'scatter',mode:'markers',x:[truth.x],y:[truth.u],visible:$('chkTruth').checked,marker:{size:12,color:'rgba(0,0,0,0)',symbol:'circle-open',line:{color:c.ink,width:2}},hovertemplate:'예산선 위 실제 최적점<extra></extra>'}
   ];
   const L=layout2D('재화 X 구매량 (x)','효용 U(x, y(x))');L.xaxis.range=[0,xMax()];L.yaxis.range=profileRange;
   return Plotly.react('profile',traces,L,{responsive:true,displaylogo:false,displayModeBar:false});
 }
 function renderConv(){
-  const c=colors(),tr=[{x:hist.map((_,i)=>i),y:hist,mode:'lines+markers+text',line:{color:c.crimson,width:2,shape:'hv'},marker:{size:7},
-    text:hist.map((u,i)=>i===hist.length-1?`gbest ${u.toFixed(3)}`:''),textposition:'top center',cliponaxis:false,
+  const c=colors(),tr=[{x:hist.map((_,i)=>i),y:hist,mode:'lines+markers',line:{color:c.crimson,width:3,shape:'hv'},marker:{size:7},cliponaxis:false,
     customdata:hist.map((_,i)=>i===0?'초기 배치':`${i}단계`),
-    hovertemplate:'%{customdata}<br>gbest 효용=%{y:.4f}<extra></extra>'}];
-  const values=$('chkTruth').checked?[...hist,truth.u]:hist;
-  const low=Math.min(...values),high=Math.max(...values),padding=Math.max(0.08,(high-low)*0.2);
-  const L=layout2D('단계','gbest 효용');L.xaxis.range=[-0.3,Math.max(1,iter)+0.4];L.xaxis.dtick=Math.max(1,Math.ceil(iter/8));
-  L.yaxis.range=[low-padding,high+padding];L.margin={l:48,r:38,t:24,b:36};
-  if($('chkTruth').checked)L.shapes=[{type:'line',xref:'paper',x0:0,x1:1,y0:truth.u,y1:truth.u,line:{color:c.ink,width:1.5,dash:'dash'}}];
+    hovertemplate:'%{customdata}<br>무리 최고 효용=%{y:.4f}<extra></extra>'}];
+  // Keep the starting best and the actual maximum as this run's fixed endpoints.
+  const initial=hist[0],high=truth.u;
+  const low=initial<high?initial:high-Math.max(1e-6,Math.abs(high)*1e-6);
+  const precision=Math.min(8,Math.max(2,Math.ceil(-Math.log10(high-low))+1));
+  const L=layout2D('시행','최고 효용 U');L.xaxis.range=[-0.3,Math.max(1,iter)+0.4];L.xaxis.dtick=Math.max(1,Math.ceil(iter/8));
+  L.yaxis={...L.yaxis,range:[low,high],autorange:false,fixedrange:true,nticks:5,tickformat:`.${precision}f`};
+  L.margin={l:52,r:18,t:26,b:40};
+  L.shapes=[{type:'line',xref:'paper',x0:0,x1:1,y0:truth.u,y1:truth.u,line:{color:c.teal,width:1.5,dash:'dash'}}];
+  L.annotations=[{xref:'paper',yref:'y',x:1,y:truth.u,xanchor:'right',yanchor:'bottom',yshift:6,showarrow:false,
+    text:`예산선 위 최대 효용 ${truth.u.toFixed(3)}`,font:{size:11,color:c.teal}}];
+  const current=hist[hist.length-1],gain=Math.max(0,current-initial),gap=Math.max(0,truth.u-current);
+  $('convSummary').innerHTML=`<div><span>초기 최고 효용</span><strong>${initial.toFixed(3)}</strong></div><div><span>초기 대비 향상</span><strong>+${gain.toFixed(3)}</strong></div><div><span>최대 효용까지 남은 차이</span><strong>${gap.toFixed(3)}</strong></div>`;
   Plotly.react('conv',tr,L,{responsive:true,displaylogo:false,displayModeBar:false});
 }
 function renderDynamic(){ if(!window.Plotly)return;renderBudget();renderProfile();renderConv();renderReadout(); }
@@ -208,15 +214,15 @@ function renderFormula(){
 }
 function renderReadout(){
   $('readout').innerHTML=`<dt>단계</dt><dd>${iter}</dd>
-    <dt>현재 gbest</dt><dd>x = ${n2(gbest.x)}, y = ${n2(yOf(gbest.x))}</dd>
-    <dt>현재 최고 효용</dt><dd>U = ${gbest.u.toFixed(4)}</dd>
+    <dt>무리가 찾은 최고 효용 위치</dt><dd>x = ${n2(gbest.x)}, y = ${n2(yOf(gbest.x))}</dd>
+    <dt>무리가 찾은 최고 효용</dt><dd>U = ${gbest.u.toFixed(4)}</dd>
     <dt>예산선 위 최대 효용</dt><dd>U* ≈ ${truth.u.toFixed(4)}</dd>`;
 }
 function renderIterationLog(){
   const list=$('iterationLog'), summary=$('iterationSummary');
   if(!list || !summary) return;
   const current=`(x = ${n2(gbest.x)}, y = ${n2(yOf(gbest.x))}), U = ${gbest.u.toFixed(3)}`;
-  summary.textContent=iter===0 ? `초기 gbest: ${current}. 아직 단계를 진행하지 않았습니다.` : `${iter}단계 진행 · 현재 gbest: ${current}`;
+  summary.textContent=iter===0 ? `초기 무리 최고 기록: ${current}. 아직 단계를 진행하지 않았습니다.` : `${iter}단계 진행 · 무리 최고 기록: ${current}`;
   if(stepLog.length===0){
     list.innerHTML='<li class="iteration-empty">첫 단계를 진행하면 탐색 과정이 여기에 표시됩니다.</li>';
     return;
@@ -224,9 +230,9 @@ function renderIterationLog(){
   list.innerHTML=stepLog.map(entry=>{
     const now=`(x = ${n2(entry.x)}, y = ${n2(yOf(entry.x))}), U = ${entry.u.toFixed(3)}`;
     const caption=entry.improved
-      ? `gbest 갱신: U ${entry.oldU.toFixed(3)} → ${entry.u.toFixed(3)} (+${(entry.u-entry.oldU).toFixed(3)}), x=${n2(entry.x)}, y=${n2(yOf(entry.x))}.`
-      : `gbest 유지: ${now}.`;
-    return `<li class="iteration-entry ${entry.improved?'is-improved':'is-stable'}"><strong class="iteration-number">${entry.n}단계</strong><p>${caption} pbest 갱신 ${entry.personalUpdates}개.</p></li>`;
+      ? `무리 최고 효용 갱신: U ${entry.oldU.toFixed(3)} → ${entry.u.toFixed(3)} (+${(entry.u-entry.oldU).toFixed(3)}), x=${n2(entry.x)}, y=${n2(yOf(entry.x))}.`
+      : `무리 최고 효용 유지: ${now}.`;
+    return `<li class="iteration-entry ${entry.improved?'is-improved':'is-stable'}"><strong class="iteration-number">${entry.n}단계</strong><p>${caption} 개별 최고 효용 갱신 ${entry.personalUpdates}개.</p></li>`;
   }).join('');
   list.scrollTop=list.scrollHeight;
 }
@@ -238,7 +244,7 @@ function populateFocus(){
   $('focusParticle').value='0';
 }
 function learningCaption(phase,message){
-  const labels=['속도 계산','위치 이동','pbest 비교','gbest 비교'];
+  const labels=['속도 계산','위치 이동','개별 최고 효용 비교','무리 최고 효용 비교'];
   $('learningExplanation').innerHTML=`<ol class="learning-phases">${labels.map((label,i)=>`<li class="${phase===i+1?'active':''}" ${phase===i+1?'aria-current="step"':''}>${i+1}. ${label}</li>`).join('')}</ol><p>${message}</p>`;
 }
 function updateLearningMode(){
@@ -253,30 +259,30 @@ async function advanceSlow(){
   if(!slowState){
     slowState={phase:1,plan:planStep(swarm,gbest),before:{...gbest},startXs:swarm.map(p=>p.x),startPbests:swarm.map(p=>p.bx),focus:focusIndex()};
     const p=slowState.plan[slowState.focus];
-    learningCaption(1,`<strong>${iter+1}시행 · 입자 ${slowState.focus+1}: 속도 계산</strong><br>v′ = wv + c₁r₁(pbest − x) + c₂r₂(gbest − x). 관성은 이전 움직임을, 개인 기억과 군집 정보는 좋은 위치로 향하는 힘을 더합니다.<br>r₁=${p.r1.toFixed(3)}, r₂=${p.r2.toFixed(3)} · 관성 ${p.inertia.toFixed(3)} + 개인 기억 ${p.personal.toFixed(3)} + 군집 정보 ${p.social.toFixed(3)} = ${p.rawV.toFixed(3)}. 속도 제한 적용 후 v′=${p.nextV.toFixed(3)}. 아직 점과 기억은 움직이지 않았습니다.`);
+    learningCaption(1,`<strong>${iter+1}시행 · 입자 ${slowState.focus+1}: 속도 계산</strong><br>관성은 이전 움직임을, 개인 기억과 무리의 최고 효용 위치는 좋은 곳으로 향하는 힘을 더합니다.<br>r₁=${p.r1.toFixed(3)}, r₂=${p.r2.toFixed(3)} · 관성 ${p.inertia.toFixed(3)} + 개인 기억 ${p.personal.toFixed(3)} + 무리 정보 ${p.social.toFixed(3)} = ${p.rawV.toFixed(3)}. 속도 제한을 적용하면 ${p.nextV.toFixed(3)}입니다. 아직 점과 기록은 움직이지 않았습니다.`);
     $('btnStep').textContent='② 천천히 이동 보기 ▶';setAnimationControls(false);return;
   }
   const state=slowState,p=state.plan[state.focus];
   if(state.phase===1){
     animating=true;setAnimationControls(true);commitPositions(swarm,state.plan);
-    learningCaption(2,`<strong>${iter+1}시행 · 입자 ${state.focus+1}: 위치 이동</strong><br>x′ = x + v′: ${p.x.toFixed(3)} + (${p.nextV.toFixed(3)}) → ${p.nextX.toFixed(3)}. 위치가 예산선의 범위를 벗어나면 끝점에서 멈춥니다.<br>y′ = (M − pₓx′)/pᵧ = ${yOf(p.nextX).toFixed(3)}. 점과 수선이 함께 움직입니다. 이동 후 U=${p.nextU.toFixed(3)}이며, pbest와 gbest는 아직 이전 기록입니다.`);
+    learningCaption(2,`<strong>${iter+1}시행 · 입자 ${state.focus+1}: 위치 이동</strong><br>속도만큼 이동해 x=${p.nextX.toFixed(3)}에 도착합니다. 위치가 예산선의 범위를 벗어나면 끝점에서 멈춥니다.<br>예산을 모두 쓰므로 y=${yOf(p.nextX).toFixed(3)}입니다. 점과 수선이 함께 움직입니다. 이동 후 효용은 ${p.nextU.toFixed(3)}이며, 최고 기록은 아직 이전 상태입니다.`);
     setStatus(`${iter+1}시행 · 위치를 천천히 이동하는 중입니다.`);
     try{
       await Promise.all([renderBudget(state.startXs,state.before.x,state.startPbests),renderProfile(state.startXs,state.before.x,state.startPbests)]);
       await animateMovement(state.startXs,state.startPbests,state.before.x,2600);
     }catch(e){await Promise.all([renderBudget(),renderProfile()]);}
     finally{animating=false;state.phase=2;setAnimationControls(false);}
-    $('btnStep').textContent='③ pbest 비교 보기 ▶';setStatus('이동 완료 · 다음 버튼으로 개인 최고 기록을 비교하세요.');return;
+    $('btnStep').textContent='③ 개별 최고 효용 비교 보기 ▶';setStatus('이동 완료 · 다음 버튼으로 개별 입자의 최고 효용을 비교하세요.');return;
   }
   if(state.phase===2){
     commitPersonal(swarm,state.plan);state.phase=3;
-    learningCaption(3,`<strong>${iter+1}시행 · 입자 ${state.focus+1}: pbest 비교</strong><br>새 위치의 효용 ${p.nextU.toFixed(3)}을 이전 개인 최고 효용 ${p.bu.toFixed(3)}과 비교합니다. ${p.improved?`더 높으므로 pbest를 x=${p.nextX.toFixed(3)}로 갱신합니다.`:'더 높지 않으므로 이전 pbest를 유지합니다.'}<br>전체 ${swarm.length}개 입자 중 ${state.plan.filter(n=>n.improved).length}개가 개인 기록을 갱신했습니다. 군집 최고점은 다음 과정에서 비교합니다.`);
-    await Promise.all([renderBudget(),renderProfile()]);$('btnStep').textContent='④ gbest 비교 보기 ▶';return;
+    learningCaption(3,`<strong>${iter+1}시행 · 입자 ${state.focus+1}: 개별 최고 효용 비교</strong><br>새 위치의 효용 ${p.nextU.toFixed(3)}을 이전 개별 최고 효용 ${p.bu.toFixed(3)}과 비교합니다. ${p.improved?`더 높으므로 개별 최고 위치를 x=${p.nextX.toFixed(3)}로 갱신합니다.`:'더 높지 않으므로 이전 최고 위치를 유지합니다.'}<br>전체 ${swarm.length}개 입자 중 ${state.plan.filter(n=>n.improved).length}개가 개별 최고 효용을 갱신했습니다. 무리 최고 효용은 다음 과정에서 비교합니다.`);
+  await Promise.all([renderBudget(),renderProfile()]);$('btnStep').textContent='④ 무리 최고 효용 비교 보기 ▶';return;
   }
   commitGlobal(swarm,gbest);iter++;hist.push(gbest.u);
   const improved=gbest.u>state.before.u;
   stepLog.push({n:iter,oldX:state.before.x,oldU:state.before.u,x:gbest.x,u:gbest.u,improved,personalUpdates:state.plan.filter(n=>n.improved).length});
-  learningCaption(4,`<strong>${iter}시행: gbest 비교 · 시행 완료</strong><br>모든 입자의 pbest 중 효용이 가장 큰 기록을 군집 최고점으로 선택합니다. 이전 gbest U=${state.before.u.toFixed(3)}, 비교 후 U=${gbest.u.toFixed(3)}.<br>${improved?`더 좋은 기록을 발견해 빨간 최고점을 x=${n2(gbest.x)}, y=${n2(yOf(gbest.x))}로 갱신했습니다.`:'더 좋은 기록이 없어 군집 최고점을 유지했습니다.'} 다음 시행의 모든 입자는 이 gbest를 참조해 속도를 계산합니다.`);
+  learningCaption(4,`<strong>${iter}시행: 무리 최고 효용 비교 · 시행 완료</strong><br>모든 입자의 개별 최고 효용 중 가장 높은 기록을 무리 최고 효용으로 선택합니다. 이전 값은 ${state.before.u.toFixed(3)}, 비교 후 값은 ${gbest.u.toFixed(3)}입니다.<br>${improved?`더 좋은 기록을 발견해 빨간 최고점을 x=${n2(gbest.x)}, y=${n2(yOf(gbest.x))}로 갱신했습니다.`:'더 좋은 기록이 없어 무리 최고 효용을 유지했습니다.'} 다음 시행의 모든 입자는 이 위치를 참고해 속도를 계산합니다.`);
   slowState=null;setAnimationControls(false);$('btnStep').textContent='다음 시행 · 속도 계산 ▶';
   renderDynamic();renderIterationLog();setStatus(`${iter}시행 완료 · 속도 계산부터 다시 살펴볼 수 있습니다.`);
 }
@@ -300,7 +306,7 @@ async function advanceOneStep(){
   renderIterationLog();renderReadout();renderConv();
   if(animationFailed){setStatus('입자 위치를 갱신했습니다. 다음 단계를 눌러 탐색을 이어가세요.');return;}
   setStatus(gbest.u>=truth.u-0.001
-    ? `예산선 위 최적해에 가까워졌습니다. ${iter}단계의 이동과 gbest 갱신을 확인해 보세요.`
+    ? `예산선 위 최적해에 가까워졌습니다. ${iter}단계의 이동과 무리 최고 효용 갱신을 확인해 보세요.`
     : `${iter}단계 이동 완료 · 다음 단계를 눌러 탐색을 이어가세요.`);
 }
 
@@ -325,7 +331,7 @@ function presetRow(host, list, obj, defs){
   }));
 }
 
-function init(){
+async function init(){
   buildCtrls('psoCtrls', PSO_CTRLS, S, onPsoChange);
   presetRow('psoPresets', PSO_PRESETS, S, PSO_CTRLS.filter(d=>['w','c1','c2'].includes(d.key)));
   $('btnStep').addEventListener('click', advanceOneStep);
@@ -340,6 +346,7 @@ function init(){
   populateFocus();updateLearningMode();
   renderIterationLog();
   if(!window.Plotly){ $('landscape').innerHTML='<div class="loading">그래프 라이브러리를 불러오지 못했습니다. 페이지를 새로고침해 주세요.</div>'; return; }
+  if(document.fonts)await Promise.allSettled([document.fonts.load('400 12px "NEXON Lv2 Gothic OTF"'),document.fonts.load('700 12px "NEXON Lv2 Gothic OTF"')]);
   $('landscape').innerHTML='';
   renderAll();
 }

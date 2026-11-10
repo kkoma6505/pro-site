@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f7f8f5">
+<title>PSO 2단계 · 무작위로 뿌린 입자들</title>
+<link rel="stylesheet" href="style.css">
+<link rel="preload" href="fonts/NEXON-Lv2-Gothic-Regular.otf" as="font" type="font/otf" crossorigin>
+<link rel="stylesheet" href="stages.css">
+</head>
+<body>
+<div class="stage1-wrap">
+  <header class="stage1-header" data-stage="02">
+    <div class="eyebrow">PARTICLE SWARM OPTIMIZATION · 02</div>
+    <h1>무작위로 뿌린 입자들</h1>
+    <p class="lede">입자 무리를 한 번 무작위로 뿌리고 다섯 시행을 이어서 진행합니다. 매 시행에서 집단의 최고 효용이 갱신되는지 확인하고, 다음 시행에서 입자들이 갱신된 최고 기록을 따라가는 모습을 살펴보세요.</p>
+    <nav class="stage-nav" aria-label="학습 단계"><a href="stage1.html"><span class="nav-number">01</span><span class="nav-copy">기본 원리<small>입자의 움직임 이해하기</small></span></a><a href="stage2.html" aria-current="page"><span class="nav-number">02</span><span class="nav-copy">연속 시행<small>최고 기록을 따라 탐색하기</small></span></a><a href="index.html"><span class="nav-number">03</span><span class="nav-copy">예산 제약 최적화<small>실제 최적화 문제에 적용하기</small></span></a></nav>
+  </header>
+  <main class="stage1-grid">
+    <section class="s1-card chart-card" aria-labelledby="hillTitle">
+      <span class="card-kicker">SIMULATION</span><h2 id="hillTitle">한 봉우리 효용 함수</h2><p class="card-note">곡선이 높을수록 효용이 커집니다. 입자와 최고 기록의 변화를 관찰하세요.</p>
+      <div class="plot-wrap"><svg id="hill" viewBox="0 0 720 340" role="img" aria-label="봉우리 모양 효용 곡선과 입자 위치 그래프"></svg></div>
+      <div class="plot-legend"><span><i class="key key-current"></i>현재 입자</span><span><i class="key key-pbest"></i>개별 입자의 최고 효용</span><span><i class="key key-gbest"></i>무리가 찾은 최고 효용</span></div>
+      <div class="concepts">
+        <article><b>현재 위치 x</b>입자가 지금 서 있는 답 후보입니다.</article>
+        <article><b>개별 입자의 최고 효용</b>그 입자가 지금까지 찾은 효용의 최고 기록입니다.</article>
+        <article><b>무리가 찾은 최고 효용</b>모든 입자의 최고 기록 중 가장 높은 효용입니다.</article>
+      </div>
+    </section>
+    <aside class="s1-card control-card" aria-labelledby="stepTitle">
+      <span class="card-kicker">LEARNING GUIDE</span><h2 id="stepTitle">최고 기록을 따라, 다섯 번</h2>
+      <ol class="progress" id="progress" aria-label="시행 과정"></ol>
+      <div class="explain" id="explain" aria-live="polite"></div>
+      <div class="values" id="values"></div>
+      <div class="actions"><button class="primary" id="next">다음 시행 진행 →</button><button id="reset">새 무리로 시작</button></div>
+      <div class="trial-card"><div class="trial-top"><span>집단 최고 효용 기록</span><span id="trialCount">0 / 5회</span></div><p id="trialResult">다음 시행에서는 현재 집단 최고 효용 위치를 모든 입자가 참고합니다.</p><ol class="history" id="history"></ol></div>
+      <div class="status" id="status">현재 집단 최고 효용을 확인한 뒤 다음 시행을 눌러보세요.</div>
+    </aside>
+  </main>
+<footer class="lesson-footer"><span>PSO LEARNING LAB · 관찰하고, 이해하고, 적용하기</span><a href="index.html">다음 단계 · 예산 제약 최적화 →</a></footer></div>
+<script src="stage2.js"></script>
+</body>
+</html>

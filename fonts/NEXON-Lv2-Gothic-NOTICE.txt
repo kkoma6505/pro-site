@@ -1,0 +1,11 @@
+NEXON Lv2 Gothic OTF / 넥슨Lv2고딕 OTF
+
+Copyright (c) 2019 NEXON. All rights reserved.
+Font designed by FONTRIX Inc.
+
+Original OTF files are included without modification in Light, Regular,
+Medium and Bold weights. The copyright notice above is retained from
+the original font metadata.
+
+Font publisher: NEXON
+Official font information and usage policy: https://brand.nexon.com/
