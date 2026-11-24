@@ -24,7 +24,7 @@
   --indigo:#a0b9e0;--crimson:#ef9a83;--grid:#3b4b3f;--soft:#29382d;--plot:#1d2a23;--on-accent:#172b21;
 }
 *{box-sizing:border-box}
-*,*::before,*::after{font-family:var(--font)!important}
+body{font-family:var(--font)}
 body{margin:0;background:radial-gradient(ellipse at 90% 0%,color-mix(in srgb,var(--amber) 7%,transparent),transparent 45%),var(--bg);color:var(--ink);font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased}
 button,input,select{font:inherit}
 button,a,input,select{-webkit-tap-highlight-color:transparent}

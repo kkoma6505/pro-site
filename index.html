@@ -8,7 +8,10 @@
 <meta name="description" content="PSO의 유래와 의의, 국소 최적점의 한계와 속도·위치 갱신식을 살펴보고 최적 효용 탐색을 실습합니다.">
 <link rel="stylesheet" href="style.css">
 <link rel="preload" href="fonts/NEXON-Lv2-Gothic-Regular.otf" as="font" type="font/otf" crossorigin>
+<link rel="stylesheet" href="lib/katex/katex.min.css">
 <link rel="stylesheet" href="stages.css">
+<script defer src="lib/katex/katex.min.js"></script>
+<script defer src="intro-math.js"></script>
 </head>
 <body class="intro-page">
 <div class="stage1-wrap">
@@ -42,39 +45,36 @@
         <h2 id="updateTitle">속도를 정하고, 위치를 옮깁니다</h2>
         <div class="intro-update">
           <h3>속도 업데이트</h3>
-          <div class="intro-equation" role="math" aria-label="다음 속도는 관성, 개인 경험을 향하는 항, 무리 경험을 향하는 항의 합입니다.">
-            <span>v<sub>i</sub>(t + 1) =</span>
-            <span class="term-inertia">w · v<sub>i</sub>(t)</span>
-            <span class="term-personal">+ c<sub>1</sub> · r<sub>1</sub> · (pbest<sub>i</sub> − x<sub>i</sub>(t))</span>
-            <span class="term-social">+ c<sub>2</sub> · r<sub>2</sub> · (gbest − x<sub>i</sub>(t))</span>
+          <div class="intro-equation" data-display-math data-latex="\begin{aligned} v_i(t+1) ={}&amp; w\,v_i(t) \\ &amp; {}+c_1 r_1 \left(\mathrm{pbest}_i-x_i(t)\right) \\ &amp; {}+c_2 r_2 \left(\mathrm{gbest}-x_i(t)\right) \end{aligned}">
+            vᵢ(t + 1) = w · vᵢ(t) + c₁ · r₁ · (pbestᵢ − xᵢ(t)) + c₂ · r₂ · (gbest − xᵢ(t))
           </div>
           <p class="intro-equation-note">가던 방향을 유지하는 관성에, 나와 무리가 최고 효용을 얻었던 위치를 향하는 영향을 더합니다.</p>
         </div>
         <div class="intro-update">
           <h3>위치 업데이트</h3>
-          <div class="intro-equation" role="math" aria-label="다음 위치는 현재 위치에 새 속도를 더한 값입니다.">
-            <span>x<sub>i</sub>(t + 1) = x<sub>i</sub>(t) + v<sub>i</sub>(t + 1)</span>
+          <div class="intro-equation" data-display-math data-latex="x_i(t+1)=x_i(t)+v_i(t+1)">
+            xᵢ(t + 1) = xᵢ(t) + vᵢ(t + 1)
           </div>
           <p class="intro-equation-note">정해진 속도만큼 이동한 뒤 효용을 확인하고, 더 높으면 개인과 무리의 최고 기록을 갱신합니다.</p>
         </div>
-        <p class="intro-position-note"><strong>기록과 위치를 구분해 보세요.</strong> 수식의 pbest와 gbest는 최고 효용을 얻었던 <strong>위치</strong>입니다. 지금까지의 최고 기록이며, 실제 전역 최적해라는 보장은 없습니다.</p>
+        <p class="intro-position-note"><strong>기록과 위치를 구분해 보세요.</strong> 수식의 <span data-latex="\mathrm{pbest}_i">pbestᵢ</span>와 <span data-latex="\mathrm{gbest}">gbest</span>는 최고 효용을 얻었던 <strong>위치</strong>입니다. 지금까지의 최고 기록이며, 실제 전역 최적해라는 보장은 없습니다.</p>
       </section>
       <section class="s1-card" aria-labelledby="symbolTitle">
         <span class="card-kicker">SYMBOL GUIDE</span>
         <h2 id="symbolTitle">기호가 뜻하는 것</h2>
         <dl class="intro-symbols">
-          <div><dt>w</dt><dd>관성 계수: 이전 움직임을 유지하는 정도</dd></div>
-          <div><dt>c<sub>1</sub>, c<sub>2</sub></dt><dd>학습 계수: 개인 경험과 무리 경험을 각각 따르는 정도</dd></div>
-          <div><dt>r<sub>1</sub>, r<sub>2</sub></dt><dd>0~1 사이의 난수: 속도를 계산할 때 새로 뽑아 탐색에 무작위성을 더함</dd></div>
-          <div><dt>pbest<sub>i</sub></dt><dd>개별 입자가 지금까지 가장 높은 효용을 얻었던 위치</dd></div>
-          <div><dt>gbest</dt><dd>무리 전체가 지금까지 가장 높은 효용을 얻었던 위치</dd></div>
-          <div><dt>x<sub>i</sub>(t), v<sub>i</sub>(t)</dt><dd>시점 t에서 입자 i의 위치와 이동 속도</dd></div>
+          <div><dt><span data-latex="w">w</span></dt><dd>관성 계수: 이전 움직임을 유지하는 정도</dd></div>
+          <div><dt><span data-latex="c_1,\ c_2">c₁, c₂</span></dt><dd>학습 계수: 개인 경험과 무리 경험을 각각 따르는 정도</dd></div>
+          <div><dt><span data-latex="r_1,\ r_2">r₁, r₂</span></dt><dd>0~1 사이의 난수: 속도를 계산할 때 새로 뽑아 탐색에 무작위성을 더함</dd></div>
+          <div><dt><span data-latex="\mathrm{pbest}_i">pbestᵢ</span></dt><dd>개별 입자가 지금까지 가장 높은 효용을 얻었던 위치</dd></div>
+          <div><dt><span data-latex="\mathrm{gbest}">gbest</span></dt><dd>무리 전체가 지금까지 가장 높은 효용을 얻었던 위치</dd></div>
+          <div><dt><span data-latex="x_i(t)">xᵢ(t)</span><span data-latex="v_i(t)">vᵢ(t)</span></dt><dd>시점 t에서 입자 i의 위치와 이동 속도</dd></div>
         </dl>
       </section>
     </div>
     <details class="intro-sources">
       <summary>출처와 수식 참고</summary>
-      <p>위 식은 관성 계수 w를 포함한 PSO의 갱신식입니다. 알고리즘의 유래·갱신 규칙·특성은 아래 문헌을 참고했습니다.</p>
+      <p>위 식은 관성 계수 <span data-latex="w">w</span>를 포함한 PSO의 갱신식입니다. 알고리즘의 유래·갱신 규칙·특성은 아래 문헌을 참고했습니다.</p>
       <ul>
         <li><a href="https://doi.org/10.1109/ICNN.1995.488968" target="_blank" rel="noopener noreferrer">Kennedy &amp; Eberhart (1995), Particle swarm optimization</a></li>
         <li><a href="https://doi.org/10.1109/ICEC.1998.699146" target="_blank" rel="noopener noreferrer">Shi &amp; Eberhart (1998), A modified particle swarm optimizer</a></li>
