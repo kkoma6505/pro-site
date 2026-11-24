@@ -2,85 +2,88 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>PSO 알고리즘을 통한 최적화 | 예산제약 효용 극대화</title>
-<script src="lib/plotly.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f5f4ee">
+<title>PSO 소개 · 개인의 경험에서 집단의 탐색으로</title>
+<meta name="description" content="PSO의 유래와 의의, 국소 최적점의 한계와 속도·위치 갱신식을 살펴보고 최적 효용 탐색을 실습합니다.">
 <link rel="stylesheet" href="style.css">
 <link rel="preload" href="fonts/NEXON-Lv2-Gothic-Regular.otf" as="font" type="font/otf" crossorigin>
 <link rel="stylesheet" href="stages.css">
 </head>
-<body class="stage3-page">
-<div class="background-emblem" aria-hidden="true"></div>
-<div class="wrap">
-  <header data-stage="03">
-  <div class="eyebrow">PARTICLE SWARM OPTIMIZATION · 03</div>
-  <h1>PSO 알고리즘을 통한 최적화</h1>
-  <p class="lede">예산을 모두 쓰는 재화 X·Y 조합 가운데 효용이 가장 큰 선택을 입자 군집 최적화로 찾아봅니다.</p>
-  <nav class="stage-nav" aria-label="학습 단계"><a href="stage1.html"><span class="nav-number">01</span><span class="nav-copy">기본 원리<small>입자의 움직임 이해하기</small></span></a><a href="stage2.html"><span class="nav-number">02</span><span class="nav-copy">연속 시행<small>최고 기록을 따라 탐색하기</small></span></a><a href="index.html" aria-current="page"><span class="nav-number">03</span><span class="nav-copy">예산 제약 최적화<small>실제 최적화 문제에 적용하기</small></span></a></nav>
-</header>
-
-<div class="row2">
-    <div class="card">
-      <span class="card-kicker">UTILITY PROFILE</span><h2>예산선 위 효용의 능선</h2>
-      <div id="profile"></div>
-      <div class="hint">반투명한 세로선은 각 입자에서 x축으로 내린 수선입니다. 입자들이 최적해로 모이면 수선도 한곳에 겹칩니다.</div>
-    </div>
-    <div class="card">
-      <span class="card-kicker">BEST RECORD</span><h2>무리가 찾은 최고 효용</h2>
-      <div id="conv"></div>
-      <p class="hint">세로축은 초기 최고 효용부터 실제 최대 효용(점선)까지 고정됩니다. 처음보다 얼마나 개선됐는지 비교해 보세요.</p>
-      <div class="conv-summary" id="convSummary" aria-live="polite"></div>
-      <dl class="readout" id="readout"></dl>
-      <div class="status" id="status">‘한 단계 진행’을 눌러 입자들이 예산선 위를 이동하며 효용을 높이는 과정을 살펴보세요.</div>
-    </div>
-  </div>
-
-  <div class="grid">
-    <div class="stage">
-      <span class="card-kicker">3D LANDSCAPE</span><h2>효용 지형 위의 입자들</h2>
-      <p class="card-note">그래프를 드래그해 돌려보며 예산선과 입자의 위치를 살펴보세요.</p>
-      <div id="landscape"><div class="loading">3차원 효용 지형과 입자 무리를 불러오는 중입니다.</div></div>
-      <div class="legend">
-        <span><i style="background:var(--amber)"></i>예산 제약 벽과 효용 능선</span>
-        <span><i style="background:var(--teal);opacity:0.24"></i>예산 이내 지형 (반투명)</span>
-        <span><i style="background:var(--indigo)"></i>입자와 이동 경로</span>
-        <span><i style="background:var(--teal)"></i>개별 입자가 찾은 최고 효용</span>
-        <span><i style="background:var(--crimson)"></i>무리가 찾은 최고 효용</span>
-        <span><i style="background:var(--ink)"></i>예산선 위 실제 최적점</span>
-        <span><i style="background:var(--indigo);opacity:0.28"></i>입자에서 바닥으로 내린 수선</span>
+<body class="intro-page">
+<div class="stage1-wrap">
+  <header class="stage1-header" data-stage="00">
+    <div class="eyebrow">PARTICLE SWARM OPTIMIZATION · INTRO</div>
+    <h1>개인의 경험에서 집단의 탐색으로</h1>
+    <p class="lede">실습을 시작하기 전에, 입자 군집 최적화가 무엇이고 어떻게 움직이는지 간단히 알아봅니다.</p>
+    <nav class="stage-nav" aria-label="학습 단계">
+      <a href="index.html" aria-current="page"><span class="nav-number">00</span><span class="nav-copy">알고리즘 소개<small>유래와 수식 살펴보기</small></span></a>
+      <a href="stage1.html"><span class="nav-number">01</span><span class="nav-copy">기본 원리<small>입자의 움직임 이해하기</small></span></a>
+      <a href="stage2.html"><span class="nav-number">02</span><span class="nav-copy">연속 시행<small>최고 기록을 따라 탐색하기</small></span></a>
+      <a href="stage3.html"><span class="nav-number">03</span><span class="nav-copy">예산 제약 최적화<small>실제 최적화 문제에 적용하기</small></span></a>
+    </nav>
+  </header>
+  <main class="intro-content">
+    <section class="s1-card intro-overview" aria-labelledby="introTitle">
+      <span class="card-kicker">BEFORE YOU START</span>
+      <h2 id="introTitle">PSO, 여섯 문장으로 이해하기</h2>
+      <div class="intro-lines">
+        <p>PSO는 1995년 <strong>제임스 케네디와 러셀 에버하트</strong>가 새 떼 같은 집단의 행동에서 착안해 제안한 입자 군집 최적화 알고리즘입니다.</p>
+        <p>여러 입자가 자신의 경험과 무리가 공유한 기록을 참고해 움직이므로, <strong>미분 없이도</strong> 복잡한 문제에서 더 높은 효용을 탐색할 수 있습니다.</p>
+        <p>다만 한곳에 너무 일찍 모이면 주변에서만 높은 <strong>국소 최적점</strong>에 머물러, 전체에서 가장 높은 효용을 주는 <strong>전역 최적해</strong>를 찾지 못할 수 있습니다.</p>
+        <p>또한 초기 배치와 난수, 관성 및 경험을 따르는 정도에 따라 탐색 과정과 결과가 달라집니다.</p>
+        <p>이번 실습에서는 <strong>각 입자를 선택을 탐색하는 개인</strong>으로, 각 입자가 찾은 최고 기록을 <strong>개인의 경험</strong>으로 해석합니다.</p>
+        <p>입자들이 개인과 무리의 경험을 함께 활용해 <strong>최적 효용을 찾아가는 과정</strong>을 다음 세 단계에서 관찰해 봅니다.</p>
       </div>
-      <section class="iteration-log-section" aria-labelledby="iterationLogTitle">
-        <h2 id="iterationLogTitle">단계별 탐색 캡션</h2>
-        <div class="learning-explanation" id="learningExplanation" hidden aria-live="polite"></div>
-        <div class="iteration-summary" id="iterationSummary"></div>
-        <ol class="iteration-log" id="iterationLog">
-          <li class="iteration-empty">한 단계 진행을 누르면 입자의 이동과 무리 최고 효용의 변화가 표시됩니다.</li>
-        </ol>
+    </section>
+    <div class="intro-detail-grid">
+      <section class="s1-card" aria-labelledby="updateTitle">
+        <span class="card-kicker">HOW IT MOVES</span>
+        <h2 id="updateTitle">속도를 정하고, 위치를 옮깁니다</h2>
+        <div class="intro-update">
+          <h3>속도 업데이트</h3>
+          <div class="intro-equation" role="math" aria-label="다음 속도는 관성, 개인 경험을 향하는 항, 무리 경험을 향하는 항의 합입니다.">
+            <span>v<sub>i</sub>(t + 1) =</span>
+            <span class="term-inertia">w · v<sub>i</sub>(t)</span>
+            <span class="term-personal">+ c<sub>1</sub> · r<sub>1</sub> · (pbest<sub>i</sub> − x<sub>i</sub>(t))</span>
+            <span class="term-social">+ c<sub>2</sub> · r<sub>2</sub> · (gbest − x<sub>i</sub>(t))</span>
+          </div>
+          <p class="intro-equation-note">가던 방향을 유지하는 관성에, 나와 무리가 최고 효용을 얻었던 위치를 향하는 영향을 더합니다.</p>
+        </div>
+        <div class="intro-update">
+          <h3>위치 업데이트</h3>
+          <div class="intro-equation" role="math" aria-label="다음 위치는 현재 위치에 새 속도를 더한 값입니다.">
+            <span>x<sub>i</sub>(t + 1) = x<sub>i</sub>(t) + v<sub>i</sub>(t + 1)</span>
+          </div>
+          <p class="intro-equation-note">정해진 속도만큼 이동한 뒤 효용을 확인하고, 더 높으면 개인과 무리의 최고 기록을 갱신합니다.</p>
+        </div>
+        <p class="intro-position-note"><strong>기록과 위치를 구분해 보세요.</strong> 수식의 pbest와 gbest는 최고 효용을 얻었던 <strong>위치</strong>입니다. 지금까지의 최고 기록이며, 실제 전역 최적해라는 보장은 없습니다.</p>
+      </section>
+      <section class="s1-card" aria-labelledby="symbolTitle">
+        <span class="card-kicker">SYMBOL GUIDE</span>
+        <h2 id="symbolTitle">기호가 뜻하는 것</h2>
+        <dl class="intro-symbols">
+          <div><dt>w</dt><dd>관성 계수: 이전 움직임을 유지하는 정도</dd></div>
+          <div><dt>c<sub>1</sub>, c<sub>2</sub></dt><dd>학습 계수: 개인 경험과 무리 경험을 각각 따르는 정도</dd></div>
+          <div><dt>r<sub>1</sub>, r<sub>2</sub></dt><dd>0~1 사이의 난수: 속도를 계산할 때 새로 뽑아 탐색에 무작위성을 더함</dd></div>
+          <div><dt>pbest<sub>i</sub></dt><dd>개별 입자가 지금까지 가장 높은 효용을 얻었던 위치</dd></div>
+          <div><dt>gbest</dt><dd>무리 전체가 지금까지 가장 높은 효용을 얻었던 위치</dd></div>
+          <div><dt>x<sub>i</sub>(t), v<sub>i</sub>(t)</dt><dd>시점 t에서 입자 i의 위치와 이동 속도</dd></div>
+        </dl>
       </section>
     </div>
-
-    <div class="panel">
-      <div class="card">
-        <span class="card-kicker">EXPLORATION</span><h2>한 시행씩 탐색하기</h2>
-        <div class="formula" id="formula"></div>
-        <label class="check"><input type="checkbox" id="chkSlow"> 천천히 배우기 · 과정별 진행</label>
-        <label class="focus-select" id="focusLabel" hidden>계산을 살펴볼 점 <select id="focusParticle" aria-label="계산을 살펴볼 입자"></select></label>
-        <div class="actions">
-          <button class="primary wide" id="btnStep">한 단계 진행 ▶</button>
-          <button id="btnReset">처음으로</button>
-        </div>
-        <label class="check"><input type="checkbox" id="chkTruth"> 지형과 능선에 실제 최적점 표시</label>
-      </div>
-
-      <div class="card">
-        <span class="card-kicker">PARAMETERS</span><h2>입자 무리 설정</h2>
-        <div class="presets" id="psoPresets"></div>
-        <div id="psoCtrls"></div>
-      </div>
-    </div>
-  </div>
-<footer class="lesson-footer"><span>PSO LEARNING LAB · 관찰하고, 이해하고, 적용하기</span><a href="stage1.html">처음부터 다시 살펴보기 →</a></footer>
+    <details class="intro-sources">
+      <summary>출처와 수식 참고</summary>
+      <p>위 식은 관성 계수 w를 포함한 PSO의 갱신식입니다. 알고리즘의 유래·갱신 규칙·특성은 아래 문헌을 참고했습니다.</p>
+      <ul>
+        <li><a href="https://doi.org/10.1109/ICNN.1995.488968" target="_blank" rel="noopener noreferrer">Kennedy &amp; Eberhart (1995), Particle swarm optimization</a></li>
+        <li><a href="https://doi.org/10.1109/ICEC.1998.699146" target="_blank" rel="noopener noreferrer">Shi &amp; Eberhart (1998), A modified particle swarm optimizer</a></li>
+        <li><a href="https://doi.org/10.1109/CEC.2001.934374" target="_blank" rel="noopener noreferrer">Eberhart &amp; Shi (2001), Developments, applications and resources</a></li>
+        <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC1989676/" target="_blank" rel="noopener noreferrer">Schutte et al. (2004), Parallel global optimization with the particle swarm algorithm</a></li>
+      </ul>
+    </details>
+  </main>
+  <footer class="lesson-footer"><span>PSO LEARNING LAB · 관찰하고, 이해하고, 적용하기</span><a class="intro-start" href="stage1.html">1단계 · 입자의 움직임 살펴보기</a></footer>
 </div>
-<script src="app.js"></script>
 </body>
 </html>
